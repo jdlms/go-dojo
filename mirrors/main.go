@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -36,43 +35,31 @@ func main() {
 }
 
 func findFastest(urls []string) response {
-	ctx, cancel := context.WithCancel(context.Background())
-	// cancel ensures any requests are closed when parent fuction returns
-	defer cancel()
 
 	// two channels
 	urlChan := make(chan string)
 	latencyChan := make(chan time.Duration)
 
 	for _, url := range urls {
-		// mirrorUrl := url
+		mirrorUrl := url
 
 		// go routines function
-		go func(mirrorUrl string) {
+		go func() {
 			start := time.Now()
-			// get request first without & then with the context needed to cancel slower go routines
-			// _, err := http.Get(mirrorUrl + "/README")
-			req, err := http.NewRequestWithContext(ctx, "GET", mirrorUrl+"/README", nil)
+
+			_, err := http.Get(mirrorUrl + "/README")
+
 			if err != nil {
 				return
 			}
 			// make the request explicitly now that context is in use
-			r, err := http.DefaultClient.Do(req)
-			if err != nil {
-				fmt.Printf("this request was cancled: %s", err)
-				return
-			}
-			// close the response body
-			defer r.Body.Close()
 
 			latency := time.Since(start) / time.Millisecond
 			if err == nil {
 				urlChan <- mirrorUrl
 				latencyChan <- latency
-				// cancel routines spawned, we don't need them anymore, they're too slow
-				cancel()
 			}
-		}(url)
+		}()
 	}
 
 	return response{<-urlChan, <-latencyChan}
