@@ -48,7 +48,18 @@ func main() {
 	fmt.Println(concatFunc(arr1, arr2))
 
 	fmt.Println(concat)
+	//
 
+	// # concat two slices into an array
+	soonToBeArray1 := []int{5, 4, 3, 2, 1}
+	soonToBeArray2 := []int{10, 9, 8, 7, 6}
+
+	emptyArray := [10]int{}
+
+	copy(emptyArray[:], soonToBeArray1)
+	copy(emptyArray[len(soonToBeArray1):], soonToBeArray2)
+
+	fmt.Println(emptyArray)
 }
 
 func concatFunc(x [4]int, y [4]int) (string, []int) {
