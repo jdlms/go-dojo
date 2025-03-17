@@ -75,3 +75,5 @@ func main() {
 	log.Println(orders)
 
 }
+
+// from https://codingwithpatrik.dev/posts/go-golang-sql/
